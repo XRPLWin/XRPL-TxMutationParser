@@ -1,4 +1,5 @@
 {
+  "id": 1,
   "result": {
     "Account": "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ",
     "Fee": "12",
@@ -112,17 +113,14 @@
       "TransactionIndex": 5,
       "TransactionResult": "tesSUCCESS"
     },
-    "validated": true
-  },
-  "resolvedBy": "generator",
-  "host": "wss://xrpl.link",
-  "balanceChanges": {
-    "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ": [
+    "validated": true,
+    "warnings": [
       {
-        "counterparty": "",
-        "currency": "XRP",
-        "value": "-0.000012"
+        "id": 1004,
+        "message": "This is a reporting server.  The default behavior of a reporting server is to only return validated data. If you are looking for not yet validated data, include \"ledger_index : current\" in your request, which will cause this server to forward the request to a p2p node. If the forward is successful the response will include \"forwarded\" : \"true\""
       }
     ]
-  }
+  },
+  "status": "success",
+  "type": "response"
 }

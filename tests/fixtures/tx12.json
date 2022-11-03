@@ -1,4 +1,5 @@
 {
+  "id": 1,
   "result": {
     "Account": "rcoinShpZ8MfUipcfbySaV7rPV82k1SMS",
     "Amount": {
@@ -120,41 +121,14 @@
         "value": "1000000000000000e-96"
       }
     },
-    "validated": true
-  },
-  "resolvedBy": "generator",
-  "host": "wss://xrpl.link",
-  "balanceChanges": {
-    "rcoinShpZ8MfUipcfbySaV7rPV82k1SMS": [
+    "validated": true,
+    "warnings": [
       {
-        "counterparty": "richard43NZXStHcjJi2UB8LGDQGFLKNs",
-        "currency": "021D001703B37004416E205852504C204E46543F",
-        "value": "-1e-81"
-      },
-      {
-        "counterparty": "",
-        "currency": "XRP",
-        "value": "-0.000012"
-      }
-    ],
-    "richard43NZXStHcjJi2UB8LGDQGFLKNs": [
-      {
-        "counterparty": "rcoinShpZ8MfUipcfbySaV7rPV82k1SMS",
-        "currency": "021D001703B37004416E205852504C204E46543F",
-        "value": "1e-81"
-      },
-      {
-        "counterparty": "rDMxhp4g689YyM7qfaarJRC6YMm74E3sMW",
-        "currency": "021D001703B37004416E205852504C204E46543F",
-        "value": "-1e-81"
-      }
-    ],
-    "rDMxhp4g689YyM7qfaarJRC6YMm74E3sMW": [
-      {
-        "counterparty": "richard43NZXStHcjJi2UB8LGDQGFLKNs",
-        "currency": "021D001703B37004416E205852504C204E46543F",
-        "value": "1e-81"
+        "id": 1004,
+        "message": "This is a reporting server.  The default behavior of a reporting server is to only return validated data. If you are looking for not yet validated data, include \"ledger_index : current\" in your request, which will cause this server to forward the request to a p2p node. If the forward is successful the response will include \"forwarded\" : \"true\""
       }
     ]
-  }
+  },
+  "status": "success",
+  "type": "response"
 }

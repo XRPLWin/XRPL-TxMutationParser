@@ -6,20 +6,20 @@ use PHPUnit\Framework\TestCase;
 use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
 
 /***
- * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx3.ts
- * @see https://hash.xrp.fans/E788964F86299E0D5CF9ACD30D0E1DC120BBECA1AC0E10C52FED8EE8368BC9EE/json
+ * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx8.ts
+ * @see https://hash.xrp.fans/2CE935CC1FB07310E34DF373C95CE735FCB546577BA3C3E197F5F2CECAABB8B4/json
  */
-final class Tx3Test extends TestCase
+final class Tx8Test extends TestCase
 {
-    public function testPartialPaymentSender()
+    //Sending a payment, other account (Regular Key) signed
+    public function testSendingAPaymentOtherAccountRegularKeySigned()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx3.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx8.json');
         $transaction = \json_decode($transaction);
         $account = "rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
-       
-
+        
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
        
@@ -27,7 +27,7 @@ final class Tx3Test extends TestCase
 
         //Own account: two balance changes
         $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
-        
+
         //Transaction type SENT
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
 
@@ -37,11 +37,10 @@ final class Tx3Test extends TestCase
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
             'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
-            'currency' => 'USD',
-            'value' => '-0.05'
+            'currency' => "USD",
+            'value' => "-0.1",
         ],$parsedTransaction['eventList']['primary']);
-
-
+        
         //does not contain `secondary` entry
         $this->assertArrayNotHasKey('secondary',$parsedTransaction['eventList']);
         
@@ -50,13 +49,12 @@ final class Tx3Test extends TestCase
 
         //contains (correct) `start` entry
         $this->assertArrayHasKey('start',$parsedTransaction['eventFlow']);
-        $this->assertArrayHasKey('account',$parsedTransaction['eventFlow']['start']);
         $this->assertEquals([
-            'account' => 'rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F',
+            'account' => $account,
             'mutation' => [
-                'counterparty' => "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
+                'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
                 'currency' => "USD",
-                'value' => "-0.05",
+                'value' => "-0.1",
             ]
         ],$parsedTransaction['eventFlow']['start']);
 
@@ -69,9 +67,8 @@ final class Tx3Test extends TestCase
             'account' => 'rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT',
             'mutation' => [
                 'currency' => "XRP",
-                'value' => "0.052945",
+                'value' => "0.106294",
             ]
         ],$parsedTransaction['eventFlow']['end']);
-
     }
 }

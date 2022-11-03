@@ -6,16 +6,16 @@ use PHPUnit\Framework\TestCase;
 use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
 
 /***
- * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx3.ts
+ * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx4.ts
  * @see https://hash.xrp.fans/E788964F86299E0D5CF9ACD30D0E1DC120BBECA1AC0E10C52FED8EE8368BC9EE/json
  */
-final class Tx3Test extends TestCase
+final class Tx4Test extends TestCase
 {
-    public function testPartialPaymentSender()
+    public function testPartialPaymentReceipient()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx3.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx4.json');
         $transaction = \json_decode($transaction);
-        $account = "rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F";
+        $account = "rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
        
@@ -25,20 +25,19 @@ final class Tx3Test extends TestCase
        
         # Basic info
 
-        //Own account: two balance changes
-        $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
+        //Own account: one balance change
+        $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
         
-        //Transaction type SENT
-        $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
+        //Transaction type RECEIVED
+        $this->assertEquals(TxMutationParser::MUTATIONTYPE_RECEIVED,$parsedTransaction['type']);
 
         # Event list
 
         //contains (correct) `primary` entry
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
-            'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
-            'currency' => 'USD',
-            'value' => '-0.05'
+            'currency' => 'XRP',
+            'value' => '0.052945'
         ],$parsedTransaction['eventList']['primary']);
 
 

@@ -54,7 +54,7 @@ class TxMutationParser
       // No signer known from Account, or own account has no balance changes.
       // Self is possibly a Regular Key
       $SigningPubKey = isset($this->tx->SigningPubKey) ? $this->tx->SigningPubKey : null;
-
+      
       if(\is_string($SigningPubKey) && $SigningPubKey !== '') {
         $signer = $this->pubkeyToAccount($SigningPubKey);
       }
@@ -113,7 +113,6 @@ class TxMutationParser
       $eventList['primary'] = $this->significantBalanceChange($ownBalanceChanges,$fee);
       if(count($balanceChangeExclFeeOnly) > 1) {
         foreach($balanceChangeExclFeeOnly as $change) {
-          //dd($change,$eventList['primary']);
           if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
             $eventList['secondary'] = $change;
             break;
@@ -163,7 +162,6 @@ class TxMutationParser
           ) ? $fee : null
         )
       ];
-
     }
 
     /**
@@ -177,7 +175,7 @@ class TxMutationParser
             $_balanceChanges[] = $change;
         } 
       }
-
+      
       $mutation = $this->significantBalanceChange(
         $_balanceChanges,
         (
@@ -185,10 +183,12 @@ class TxMutationParser
           (isset($this->tx->Account) && $this->tx->Account === $this->account)
         ) ? $fee : null
       );
-
-      if($mutation) {
-        $mutation['account'] = $this->tx->Destination;
-        $eventFlow['end'] = $mutation;
+      
+      if(count($mutation) > 0) {
+        $eventFlow['end'] = [
+          'account' => $this->tx->Destination,
+          'mutation' => $mutation
+        ];
       }
     }
 
@@ -201,13 +201,13 @@ class TxMutationParser
 
     $isOwnDirectTrade = (
       isset($this->tx->Account) && $this->tx->Account == $this->account && 
-      isset($eventFlow['start']) && isset($eventFlow['end'])
+      isset($eventFlow['start']) && !isset($eventFlow['end'])
     );
 
     if(
       (
-        ( !isset($this->tx->Destination) || (isset($this->tx->Destination) && $this->tx->Destination !== $this->account) ) &&
-        ( !isset($this->tx->Account) || (isset($this->tx->Account) && $this->tx->Account !== $this->account) ) 
+        ( !isset($this->tx->Destination) || (isset($this->tx->Destination)  && $this->tx->Destination !== $this->account) ) &&
+        ( !isset($this->tx->Account)     || (isset($this->tx->Account)      && $this->tx->Account     !== $this->account) )
       ) || $isOwnDirectTrade
     ) {
       $eventFlow['intermediate'] = [
@@ -217,24 +217,24 @@ class TxMutationParser
           'out' => isset($eventList['secondary']) ? $eventList['secondary'] : null,
         ]
       ];
+
+      /**
+       * If intermediate only one value (in) and negative,
+       * it's `out`
+       */
+      $in = isset($eventFlow['intermediate']['mutations']['in']) ? $eventFlow['intermediate']['mutations']['in'] : null;
+      $out = isset($eventFlow['intermediate']['mutations']['out']) ? $eventFlow['intermediate']['mutations']['out'] : null;
+      if($in && !$out && \substr($in['value'],0,1) === '-') {
+        $eventFlow['intermediate']['mutations']['out'] = $in;
+        unset($eventFlow['intermediate']['mutations']['in']);
+      }
+
+
+      if($isOwnDirectTrade && isset($eventFlow['intermediate']) && isset($eventFlow['start'])) {
+        unset($eventFlow['start']);
+      }
     }
 
-    /**
-     * If intermediate only one value (in) and negative,
-     * it's `out`
-     */
-    $in = isset($eventFlow['intermediate']['mutations']['in']) ? $eventFlow['intermediate']['mutations']['in'] : null;
-    $out = isset($eventFlow['intermediate']['mutations']['out']) ? $eventFlow['intermediate']['mutations']['out'] : null;
-    if($in && !$out && \substr($in['value'],0,1) === '-') {
-      $eventFlow['intermediate']['mutations']['out'] = $in;
-      unset($eventFlow['intermediate']['mutations']['in']);
-    }
-
-
-    if($isOwnDirectTrade && isset($eventFlow['intermediate']) && isset($eventFlow['start'])) {
-      unset($eventFlow['start']);
-    }
-    
     $this->result = [
       'self' => [
         'account' => $this->account,
@@ -301,7 +301,7 @@ class TxMutationParser
       \substr($fallback['value'],0,1) === '-' &&
       $fee
     ) {
-      $fallback['value'] = BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal($fee)->abs() ) 
+      $fallback['value'] = BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal::of($fee)->abs() ) 
         ? $fallback['value'] 
         : BigDecimal::of($fallback['value'])->plus($fee);
 

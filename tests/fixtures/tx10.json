@@ -1,4 +1,5 @@
 {
+  "id": 1,
   "result": {
     "Account": "rp65fD8N8fWxhMXwQN1CYVwYPeVofmh3S1",
     "Amount": "20304568",
@@ -198,46 +199,14 @@
       "TransactionResult": "tesSUCCESS",
       "delivered_amount": "20172288"
     },
-    "validated": true
-  },
-  "resolvedBy": "generator",
-  "host": "wss://xrpl.link",
-  "balanceChanges": {
-    "rp65fD8N8fWxhMXwQN1CYVwYPeVofmh3S1": [
+    "validated": true,
+    "warnings": [
       {
-        "counterparty": "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
-        "currency": "EUR",
-        "value": "-4"
-      },
-      {
-        "counterparty": "",
-        "currency": "XRP",
-        "value": "20.172088"
-      }
-    ],
-    "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq": [
-      {
-        "counterparty": "rp65fD8N8fWxhMXwQN1CYVwYPeVofmh3S1",
-        "currency": "EUR",
-        "value": "4"
-      },
-      {
-        "counterparty": "rhS2H7ETM3wBkFETvYycoUm9FEDYi44Pg4",
-        "currency": "EUR",
-        "value": "-3.992015968063872"
-      }
-    ],
-    "rhS2H7ETM3wBkFETvYycoUm9FEDYi44Pg4": [
-      {
-        "counterparty": "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
-        "currency": "EUR",
-        "value": "3.992015968063872"
-      },
-      {
-        "counterparty": "",
-        "currency": "XRP",
-        "value": "-20.172288"
+        "id": 1004,
+        "message": "This is a reporting server.  The default behavior of a reporting server is to only return validated data. If you are looking for not yet validated data, include \"ledger_index : current\" in your request, which will cause this server to forward the request to a p2p node. If the forward is successful the response will include \"forwarded\" : \"true\""
       }
     ]
-  }
+  },
+  "status": "success",
+  "type": "response"
 }
