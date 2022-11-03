@@ -1,3 +1,7 @@
+[![CI workflow](https://github.com/XRPLWin/XRPL-TxMutationParser/actions/workflows/main.yml/badge.svg)](https://github.com/XRPLWin/XRPL-TxMutationParser/actions/workflows/main.yml)
+[![GitHub license](https://img.shields.io/github/license/XRPLWin/XRPL-TxMutationParser)](https://github.com/XRPLWin/XRPL-TxMutationParser/blob/main/LICENSE)
+[![Total Downloads](https://img.shields.io/packagist/dt/xrplwin/xrpl-txmutationparser.svg?style=flat)](https://packagist.org/packages/xrplwin/xrpl-txmutationparser)
+
 # XRPL Transaction Mutation Parser
 
 Parse XRPL transaction to context aware object for visual representation. It takes a XRPL transaction (outcome, meta) and an XRPL account. The XRPL account is the context from which the XPRL transaction is to be interpreted.
