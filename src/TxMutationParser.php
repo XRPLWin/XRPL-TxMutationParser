@@ -3,6 +3,7 @@
 namespace XRPLWin\XRPLTxMutatationParser;
 use XRPLWin\XRPL\Utilities\BalanceChanges;
 use Brick\Math\BigDecimal;
+use XRPL_PHP\Core\Utilities as XRPLPHPUtilities;
 
 /**
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/src/index.ts
@@ -151,7 +152,7 @@ class TxMutationParser
         if(\substr($change['value'],0,1) === '-')
           $_balanceChanges[] = $change;
       }
-
+      
       $eventFlow['start'] = [
         'account' => $this->tx->Account,
         'mutation' => $this->significantBalanceChange(
@@ -172,11 +173,11 @@ class TxMutationParser
       $_balanceChanges = [];
       foreach($allBalanceChanges[$this->tx->Destination]['balances'] as $change) {
         if(isset($eventFlow['start']['mutation'])) {
-          if($change == $eventFlow['start']['mutation'])
+          if($change != $eventFlow['start']['mutation'])
             $_balanceChanges[] = $change;
-        }
-          
+        } 
       }
+
       $mutation = $this->significantBalanceChange(
         $_balanceChanges,
         (
@@ -233,7 +234,7 @@ class TxMutationParser
     if($isOwnDirectTrade && isset($eventFlow['intermediate']) && isset($eventFlow['start'])) {
       unset($eventFlow['start']);
     }
-
+    
     $this->result = [
       'self' => [
         'account' => $this->account,
@@ -290,7 +291,8 @@ class TxMutationParser
      * Fallback to default
      *  Possibly XRP sent, if so: exclude fee
      */
-
+    //$fallback = [];
+    //if(isset($balanceChanges[0]))
     $fallback = $balanceChanges[0];
 
     if(
@@ -311,8 +313,7 @@ class TxMutationParser
 
   private function pubkeyToAccount(string $SigningPubKey): string
   {
-    
-    dd('TODO pubkeyToAccount',$SigningPubKey);
+    return XRPLPHPUtilities::deriveAddress($SigningPubKey);
   }
 
   /**

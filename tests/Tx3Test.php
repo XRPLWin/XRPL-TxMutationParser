@@ -11,9 +11,9 @@ use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
  */
 final class Tx3Test extends TestCase
 {
-    public function testTx2_OwnOfferConsumedPartiallyNotBySelf()
+    public function testTx3_PartialPaymentSender()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx2.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx3.json');
         $transaction = \json_decode($transaction);
         $account = "rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
@@ -21,13 +21,13 @@ final class Tx3Test extends TestCase
 
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
-
+       
         # Basic info
 
         //Own account: two balance changes
         $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
-
-        //Transaction type TRADE
+        
+        //Transaction type SENT
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
 
         # Event list
@@ -36,16 +36,12 @@ final class Tx3Test extends TestCase
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
             'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
-            'currency' => 'EUR',
-            'value' => '249.99999999999999'
+            'currency' => 'USD',
+            'value' => '-0.05'
         ],$parsedTransaction['eventList']['primary']);
-
         //contains (correct) `secondary` entry
-        $this->assertArrayHasKey('secondary',$parsedTransaction['eventList']);
-        $this->assertEquals([
-            'currency' => 'XRP',
-            'value' => '-1000'
-        ],$parsedTransaction['eventList']['secondary']);
+        $this->assertArrayNotHasKey('secondary',$parsedTransaction['eventList']);
+        
 
         # Event flow
 
