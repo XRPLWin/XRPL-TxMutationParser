@@ -301,7 +301,7 @@ class TxMutationParser
       \substr($fallback['value'],0,1) === '-' &&
       $fee
     ) {
-      $fallback['value'] = BigDecimal::of($fallback['value']).abs().equalTo(BigDecimal($fee).abs()) 
+      $fallback['value'] = BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal($fee)->abs() ) 
         ? $fallback['value'] 
         : BigDecimal::of($fallback['value'])->plus($fee);
 
