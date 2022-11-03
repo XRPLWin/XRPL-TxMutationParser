@@ -92,7 +92,7 @@ class TxMutationParser
      * Own balance change count excl. fee only > 1 (so something was exchanged)
      * TX Type = Offer (Trade)
      */
-    if(count($balanceChangeExclFeeOnly) > 1 && $this->isOfTypeOfferOrTrade($this->tx->TransactionType)) {
+    if(count($balanceChangeExclFeeOnly) > 1 && $this->isOfTypeOfferOrPayment($this->tx->TransactionType)) {
       $type = self::MUTATIONTYPE_TRADE;
     }
 
@@ -318,7 +318,7 @@ class TxMutationParser
    * Check if $type matches words 'payment' or 'offer'
    * @return bool
    */
-  private function isOfTypeOfferOrTrade(string $type): bool
+  private function isOfTypeOfferOrPayment(string $type): bool
   {
     $type = \strtolower($type);
 
