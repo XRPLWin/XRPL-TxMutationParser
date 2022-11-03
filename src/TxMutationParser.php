@@ -18,7 +18,7 @@ class TxMutationParser
     $this->account = $reference_account;
     $this->tx = $tx;
 
-    $fee = BigDecimal::of($this->tx->Fee)->exactlyDividedBy(1000000);
+    $fee = BigDecimal::of($this->tx->Fee)->exactlyDividedBy(1000000)->stripTrailingZeros();
 
     /**
      * Calculate balance changes from meta and own changes
