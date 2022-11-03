@@ -4,8 +4,6 @@ namespace XRPLWin\XRPLTxMutatationParser;
 use XRPLWin\XRPL\Utilities\BalanceChanges;
 use Brick\Math\BigDecimal;
 
-use function PHPUnit\Framework\equalTo;
-
 /**
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/src/index.ts
  */
