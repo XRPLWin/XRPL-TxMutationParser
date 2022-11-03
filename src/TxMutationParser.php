@@ -3,8 +3,6 @@
 namespace XRPLWin\XRPLTxMutatationParser;
 use XRPLWin\XRPL\Utilities\BalanceChanges;
 use Brick\Math\BigDecimal;
-use Brick\Math\BigNumber;
-use Brick\Math\RoundingMode;
 
 use function PHPUnit\Framework\equalTo;
 
@@ -130,7 +128,7 @@ class TxMutationParser
       isset($eventList['primary']) &&
       isset($eventList['secondary']) &&
       $eventList['primary']['currency'] === $eventList['secondary']['currency'] &&
-      BigDecimal::of($eventList['primary']['value'])->abs()->isEqualTo( BigNumber::of($eventList['secondary']['value'])->abs() )
+      BigDecimal::of($eventList['primary']['value'])->abs()->isEqualTo( BigDecimal::of($eventList['secondary']['value'])->abs() )
     ) {
       unset($eventList['primary']);
       unset($eventList['secondary']);
