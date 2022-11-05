@@ -77,7 +77,6 @@ class TxMutationParser
       $type = self::MUTATIONTYPE_RECEIVED;
     }
 
-    //dump( isset($this->tx->Account) && $this->tx->Account === $this->account,$this->tx->Account );
     /**
      * Payment to self, multiple currencies affected
      */
