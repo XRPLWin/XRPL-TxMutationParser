@@ -288,10 +288,8 @@ class TxMutationParser
 
     /**
      * Fallback to default
-     *  Possibly XRP sent, if so: exclude fee
+     * Possibly XRP sent, if so: exclude fee
      */
-    //$fallback = [];
-    //if(isset($balanceChanges[0]))
     $fallback = $balanceChanges[0];
 
     if(
