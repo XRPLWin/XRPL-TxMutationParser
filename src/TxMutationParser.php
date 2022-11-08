@@ -119,7 +119,10 @@ class TxMutationParser
               $eventList['secondary'] = $change;
             else {
               $eventList['secondary']['value'] = BigDecimal::of($eventList['secondary']['value'])->plus($change['value']);
-              $eventList['secondary']['counterparty'] = null;
+              if(isset($eventList['secondary']['counterparty']) && !is_array($eventList['secondary']['counterparty']))
+                $eventList['secondary']['counterparty'] = [$eventList['secondary']['counterparty']];
+              elseif(isset($change['counterparty']))
+                $eventList['secondary']['counterparty'][] = $change['counterparty'];
             }  
           }
         }
