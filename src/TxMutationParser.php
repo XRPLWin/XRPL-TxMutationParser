@@ -111,12 +111,31 @@ class TxMutationParser
     if(count($ownBalanceChanges) > 0) {
       $eventList['primary'] = $this->significantBalanceChange($ownBalanceChanges,$fee);
       if(count($balanceChangeExclFeeOnly) > 1) {
+
+        # New start
         foreach($balanceChangeExclFeeOnly as $change) {
+          if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
+            if(!isset($eventList['secondary']))
+              $eventList['secondary'] = $change;
+            else {
+              $eventList['secondary']['value'] = BigDecimal::of($eventList['secondary']['value'])->plus($change['value']);
+              $eventList['secondary']['counterparty'] = null;
+            }  
+          }
+        }
+        if(isset($eventList['secondarysum']))
+          $eventList['secondary']['value'] = (string)$eventList['secondary']['value'];
+        # New end
+
+        # Old start
+        /*foreach($balanceChangeExclFeeOnly as $change) {
           if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
             $eventList['secondary'] = $change;
             break;
           }
-        }
+        }*/
+        # Old end
+        
       }
     }
 
