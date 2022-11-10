@@ -61,7 +61,7 @@ A sample response (as JSON):
 {
   self: {
     account: 'rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ',
-    balanceChanges: [ [Object], [Object] ]
+    balanceChanges: [ [Object], [Object], ... ]
   },
   type: 'TRADE',
   eventList: {
@@ -83,9 +83,9 @@ A sample response (as JSON):
     }
   },
   allBalanceChanges: {
-    rXUMMaPpZqPutoRszR29jtC8amWq3APkx: [ [Object], [Object] ],
-    rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ: [ [Object], [Object] ],
-    richard43NZXStHcjJi2UB8LGDQGFLKNs: [ [Object] ]
+    rXUMMaPpZqPutoRszR29jtC8amWq3APkx: [ [Object], [Object], ... ],
+    rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ: [ [Object], [Object], ... ],
+    richard43NZXStHcjJi2UB8LGDQGFLKNs: [ [Object], ... ]
   }
 }
 ```
