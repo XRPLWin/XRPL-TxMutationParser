@@ -96,7 +96,7 @@ A sample response (as JSON):
 
 If no balance changes to your context account applied: empty. If only one relevant change (e.g. payment in / out): only the `eventList.primary` object exists. If a trade happened and your account both sent and received / exchanged something, the `eventList.primary` object is the main balance change. For reference, the `eventList.secondary` value can be displayed as well.
 
-`eventList.secondary.counterparty` can be array of counterparties in viewing account is issuer and multi balances of currency is adjusted (rippled) trough multiple parties.
+`eventList.secondary.counterparty` can be array of counterparties if viewing account is issuer and multi balances of currency is adjusted (rippled) trough multiple parties ([see sample here](https://playground.xrpl.win/play/xrpl-transaction-mutation-parser?hash=A357FD7C8F0BBE7120E62FD603ACBE98819BC623D5D12BD81AC68564393A7792&ref=rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq)) where `eventList.secondary.value` is SUM of balance changes of that currency - this behaviour is different from XRPL Labs package.
 
 A common scenario where the `eventList` is completely empty, is if your context account is eg. the account an issued currency
 rippled through, or the context account is the regular key, signing the transaction parsed.
