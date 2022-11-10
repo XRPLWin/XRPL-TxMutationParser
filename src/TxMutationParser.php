@@ -15,6 +15,7 @@ class TxMutationParser
   private array $result;
 
   const MUTATIONTYPE_SENT = 'SENT'; //Outgoing transaction
+  const MUTATIONTYPE_ACCEPT = 'ACCEPT'; //Accept NFT offer
   const MUTATIONTYPE_RECEIVED = 'RECEIVED'; //Incoming transaction
   const MUTATIONTYPE_SET = 'SET'; //Set, eg. Account, Trust Line, Offer, ...
   const MUTATIONTYPE_TRADE = 'TRADE'; //Eg. Trade based on offer, or self to self
@@ -71,6 +72,10 @@ class TxMutationParser
 
     if(isset($this->tx->Account) && $this->tx->Account === $this->account) {
       $type = self::MUTATIONTYPE_SENT;
+      
+      if($this->tx->TransactionType == 'NFTokenAcceptOffer') {
+        $type = self::MUTATIONTYPE_ACCEPT;
+      }
     }
 
     if(isset($this->tx->Destination) && $this->tx->Destination === $this->account) {
@@ -92,6 +97,9 @@ class TxMutationParser
      * Own balance change count excl. fee only > 1 (so something was exchanged)
      * TX Type = Offer (Trade)
      */
+
+    
+    
     if(count($balanceChangeExclFeeOnly) > 1 && $this->isOfTypeOfferOrPayment($this->tx->TransactionType)) {
       $type = self::MUTATIONTYPE_TRADE;
     }
@@ -169,10 +177,14 @@ class TxMutationParser
       
       $_balanceChanges = [];
       foreach($allBalanceChanges[$this->tx->Account]['balances'] as $change) {
-        if(\substr($change['value'],0,1) === '-')
+        if($this->tx->TransactionType == 'NFTokenAcceptOffer') { //allow positive
           $_balanceChanges[] = $change;
+        } else {
+          if(\substr($change['value'],0,1) === '-')
+            $_balanceChanges[] = $change;
+        }
       }
-      
+      //dd($allBalanceChanges,$this->tx->Account);
       $eventFlow['start'] = [
         'account' => $this->tx->Account,
         'mutation' => $this->significantBalanceChange(
@@ -183,6 +195,8 @@ class TxMutationParser
           ) ? $fee : null
         )
       ];
+      if($eventFlow['start']['mutation'] === [])
+        unset($eventFlow['start']);
     }
 
     /**
@@ -216,8 +230,12 @@ class TxMutationParser
     /**
      * What happened at an intermediary?
      */
-    if($type == self::MUTATIONTYPE_REGULARKEYSIGNER && $signer) {
+    if($type === self::MUTATIONTYPE_REGULARKEYSIGNER && $signer) {
       $eventFlow['intermediate'] = ['account' => $signer];
+    }
+
+    if($type === self::MUTATIONTYPE_UNKNOWN && $this->tx->TransactionType === 'NFTokenAcceptOffer' && count($balanceChangeExclFeeOnly) > 0) {
+      $type = self::MUTATIONTYPE_TRADE;
     }
 
     $isOwnDirectTrade = (
@@ -245,6 +263,7 @@ class TxMutationParser
        */
       $in = isset($eventFlow['intermediate']['mutations']['in']) ? $eventFlow['intermediate']['mutations']['in'] : null;
       $out = isset($eventFlow['intermediate']['mutations']['out']) ? $eventFlow['intermediate']['mutations']['out'] : null;
+      
       if($in && !$out && \substr($in['value'],0,1) === '-') {
         $eventFlow['intermediate']['mutations']['out'] = $in;
         unset($eventFlow['intermediate']['mutations']['in']);
@@ -308,11 +327,15 @@ class TxMutationParser
       return $nonXRPChanges[0];
     }
 
+    if(count($balanceChanges) < 1)
+      return [];
+
     /**
      * Fallback to default
      * Possibly XRP sent, if so: exclude fee
      */
     $fallback = $balanceChanges[0];
+
 
     if(
       $fallback['currency'] === 'XRP' &&
@@ -322,7 +345,7 @@ class TxMutationParser
     ) {
       $fallback['value'] = BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal::of($fee)->abs() ) 
         ? $fallback['value'] 
-        : BigDecimal::of($fallback['value'])->plus($fee);
+        : (string)BigDecimal::of($fallback['value'])->plus($fee)->stripTrailingZeros();
 
       return $fallback;
     }
