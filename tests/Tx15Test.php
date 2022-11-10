@@ -27,7 +27,7 @@ final class Tx15Test extends TestCase
         //Own account: one balance change
         $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
 
-        //Transaction type ACCEPT
+        //Transaction type TRADE
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_TRADE,$parsedTransaction['type']);
 
         # Event list
