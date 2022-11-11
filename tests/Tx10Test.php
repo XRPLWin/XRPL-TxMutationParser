@@ -30,7 +30,7 @@ final class Tx10Test extends TestCase
         //Transaction type TRADE
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_TRADE,$parsedTransaction['type']);
 
-        $this->assertTrue($parsedTransaction['self']['fee_payer']);
+        $this->assertTrue($parsedTransaction['self']['feePayer']);
 
         # Event list
 

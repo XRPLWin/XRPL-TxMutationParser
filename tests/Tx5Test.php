@@ -31,7 +31,7 @@ final class Tx5Test extends TestCase
         //Transaction type SET
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_SET,$parsedTransaction['type']);
 
-        $this->assertTrue($parsedTransaction['self']['fee_payer']);
+        $this->assertTrue($parsedTransaction['self']['feePayer']);
 
         # Event list
 

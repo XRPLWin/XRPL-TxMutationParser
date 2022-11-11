@@ -31,7 +31,7 @@ final class Tx8Test extends TestCase
         //Transaction type SENT
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
 
-        $this->assertTrue($parsedTransaction['self']['fee_payer']);
+        $this->assertTrue($parsedTransaction['self']['feePayer']);
 
         # Event list
 

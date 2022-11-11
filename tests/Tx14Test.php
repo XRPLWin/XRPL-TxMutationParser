@@ -30,7 +30,7 @@ final class Tx14Test extends TestCase
         //Transaction type ACCEPT
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_ACCEPT,$parsedTransaction['type']);
 
-        $this->assertTrue($parsedTransaction['self']['fee_payer']);
+        $this->assertTrue($parsedTransaction['self']['feePayer']);
 
         # Event list
 
