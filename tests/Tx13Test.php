@@ -30,6 +30,8 @@ final class Tx13Test extends TestCase
         //Transaction type UNKNOWN
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_UNKNOWN,$parsedTransaction['type']);
 
+        $this->assertFalse($parsedTransaction['self']['fee_payer']);
+
         # Event list
 
         //does not contain `primary` entry

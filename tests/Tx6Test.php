@@ -36,6 +36,8 @@ final class Tx6Test extends TestCase
         //Transaction type SENT
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
 
+        $this->assertTrue($parsedTransaction['self']['fee_payer']);
+
         # Event list
 
         //contains (correct) `primary` entry

@@ -30,13 +30,15 @@ final class Tx14Test extends TestCase
         //Transaction type ACCEPT
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_ACCEPT,$parsedTransaction['type']);
 
+        $this->assertTrue($parsedTransaction['self']['fee_payer']);
+
         # Event list
 
         //contains (correct) `primary` entry
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
             'currency' => 'XRP',
-            'value' => '0.000564'
+            'value' => '0.000539'
         ],$parsedTransaction['eventList']['primary']);
 
         //does not contain `secondary` entry

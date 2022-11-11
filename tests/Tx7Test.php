@@ -30,6 +30,8 @@ final class Tx7Test extends TestCase
         //Transaction type REGULARKEYSIGNER
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_REGULARKEYSIGNER,$parsedTransaction['type']);
 
+        $this->assertFalse($parsedTransaction['self']['fee_payer']);
+
         # Event list
 
         //does not contain `primary` entry
