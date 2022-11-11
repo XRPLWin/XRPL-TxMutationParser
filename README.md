@@ -60,7 +60,8 @@ A sample response (as JSON):
 ```javascript
 {
   self: {
-    account: 'rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ',
+    feePayer: true,
+    account: 'rA...',
     balanceChanges: [ [Object], [Object], ... ]
   },
   type: 'TRADE',
@@ -70,22 +71,22 @@ A sample response (as JSON):
   },
   eventFlow: {
     start: {
-      account: 'rXUMMaPpZqPutoRszR29jtC8amWq3APkx',
+      account: 'rB...',
       mutation: [Object]
     },
     intermediate: {
-      account: 'rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ',
+      account: 'rA...',
       mutations: [Object]
     },
     end: {
-      account: 'richard43NZXStHcjJi2UB8LGDQGFLKNs',
+      account: 'rC...',
       mutation: [Object]
     }
   },
   allBalanceChanges: {
-    rXUMMaPpZqPutoRszR29jtC8amWq3APkx: [ [Object], [Object], ... ],
-    rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ: [ [Object], [Object], ... ],
-    richard43NZXStHcjJi2UB8LGDQGFLKNs: [ [Object], ... ]
+    rB: [ [Object], [Object], ... ],
+    rA: [ [Object], [Object], ... ],
+    rC: [ [Object], ... ]
   }
 }
 ```

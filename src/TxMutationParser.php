@@ -13,7 +13,7 @@ class TxMutationParser
 	private readonly string $account;
 	private readonly \stdClass $tx;
   private array $result;
-  private bool $fee_payer = false; //if true then reference_account is fee payer
+  private bool $feePayer = false; //if true then reference_account is fee payer
 
   const MUTATIONTYPE_SENT = 'SENT'; //Outgoing transaction
   const MUTATIONTYPE_ACCEPT = 'ACCEPT'; //Accept NFT offer
@@ -43,7 +43,7 @@ class TxMutationParser
     foreach($ownBalanceChanges as $v) {
       if($v['currency'] === 'XRP' && $v['value'] === '-'.$fee && !isset($v['counterparty'])) {
         //pass
-        $this->fee_payer = true;
+        $this->feePayer = true;
       } else {
         $balanceChangeExclFeeOnly[] = $v;
       }
@@ -75,7 +75,7 @@ class TxMutationParser
 
     if(isset($this->tx->Account) && $this->tx->Account === $this->account) {
       $type = self::MUTATIONTYPE_SENT;
-      $this->fee_payer = true;
+      $this->feePayer = true;
       if($this->tx->TransactionType == 'NFTokenAcceptOffer') {
         $type = self::MUTATIONTYPE_ACCEPT;
       }
@@ -94,7 +94,7 @@ class TxMutationParser
       count($balanceChangeExclFeeOnly) > 1
     ) {
       $type = self::MUTATIONTYPE_TRADE;
-      $this->fee_payer = true;
+      $this->feePayer = true;
     }
 
     /**
@@ -279,7 +279,7 @@ class TxMutationParser
     /**
      * Exclude Fee from primary if primary is positive XRP and this account pays fee
      */
-    if($this->fee_payer && isset($eventList['primary'])) {
+    if($this->feePayer && isset($eventList['primary'])) {
       if($eventList['primary']['currency'] === 'XRP' && \substr($eventList['primary']['value'],0,1) !== '-') { //is positive XRP (fee included)
         $eventList['primary']['value'] = (string)BigDecimal::of($eventList['primary']['value'])->minus($fee)->stripTrailingZeros(); //remove fee from primary
       }
@@ -287,7 +287,7 @@ class TxMutationParser
 
     $this->result = [
       'self' => [
-        'fee_payer' => $this->fee_payer,
+        'feePayer' => $this->feePayer,
         'account' => $this->account,
         'balanceChanges' => $ownBalanceChanges,
       ],
