@@ -38,7 +38,7 @@ final class Tx14Test extends TestCase
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
             'currency' => 'XRP',
-            'value' => '0.000539'
+            'value' => '0.000589'
         ],$parsedTransaction['eventList']['primary']);
 
         //does not contain `secondary` entry

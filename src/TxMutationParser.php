@@ -281,7 +281,8 @@ class TxMutationParser
      */
     if($this->feePayer && isset($eventList['primary'])) {
       if($eventList['primary']['currency'] === 'XRP' && \substr($eventList['primary']['value'],0,1) !== '-') { //is positive XRP (fee included)
-        $eventList['primary']['value'] = (string)BigDecimal::of($eventList['primary']['value'])->minus($fee)->stripTrailingZeros(); //remove fee from primary
+        //remove Fee (plus positive fee to cancel out) to get real gained amount
+        $eventList['primary']['value'] = (string)BigDecimal::of($eventList['primary']['value'])->plus($fee)->stripTrailingZeros();
       }
     }
 
