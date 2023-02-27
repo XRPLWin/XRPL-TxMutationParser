@@ -49,6 +49,7 @@ class TxMutationParser
       }
     }
     unset($v);
+    //dd($balanceChangeExclFeeOnly,$ownBalanceChanges);
 
     /**
      * Get signer from tx public key
@@ -96,7 +97,7 @@ class TxMutationParser
       $type = self::MUTATIONTYPE_TRADE;
       $this->feePayer = true;
     }
-
+    
     /**
      * Own balance change count excl. fee only > 1 (so something was exchanged)
      * TX Type = Offer (Trade)
@@ -104,7 +105,7 @@ class TxMutationParser
     if(count($balanceChangeExclFeeOnly) > 1 && $this->isOfTypeOfferOrPayment($this->tx->TransactionType)) {
       $type = self::MUTATIONTYPE_TRADE;
     }
-
+    
 
     /**
      * Own balance change is fee only
@@ -119,36 +120,41 @@ class TxMutationParser
     $eventList = [];
     if(count($ownBalanceChanges) > 0) {
       $eventList['primary'] = $this->significantBalanceChange($ownBalanceChanges,$fee);
-      if(count($balanceChangeExclFeeOnly) > 1) {
+      if(count($eventList['primary']) == 0) {
+        unset($eventList['primary']);
+      } else {
+        if(count($balanceChangeExclFeeOnly) > 1) {
 
-        # New start
-        foreach($balanceChangeExclFeeOnly as $change) {
-          if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
-            if(!isset($eventList['secondary']))
+          # New start
+          foreach($balanceChangeExclFeeOnly as $change) {
+            if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
+              if(!isset($eventList['secondary']))
+                $eventList['secondary'] = $change;
+              elseif($eventList['secondary']['currency'] == $change['currency']) { //prevent "XRP" and "currency" mixing
+                $eventList['secondary']['value'] = BigDecimal::of($eventList['secondary']['value'])->plus($change['value']);
+                if(isset($eventList['secondary']['counterparty']) && !is_array($eventList['secondary']['counterparty']))
+                  $eventList['secondary']['counterparty'] = [$eventList['secondary']['counterparty']];
+                if(isset($change['counterparty']))
+                  $eventList['secondary']['counterparty'][] = $change['counterparty'];
+              }  
+            }
+          }
+          if(isset($eventList['secondary']['value']))
+            $eventList['secondary']['value'] = (string)$eventList['secondary']['value'];
+          # New end
+  
+          # Old start
+          /*foreach($balanceChangeExclFeeOnly as $change) {
+            if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
               $eventList['secondary'] = $change;
-            elseif($eventList['secondary']['currency'] == $change['currency']) { //prevent "XRP" and "currency" mixing
-              $eventList['secondary']['value'] = BigDecimal::of($eventList['secondary']['value'])->plus($change['value']);
-              if(isset($eventList['secondary']['counterparty']) && !is_array($eventList['secondary']['counterparty']))
-                $eventList['secondary']['counterparty'] = [$eventList['secondary']['counterparty']];
-              if(isset($change['counterparty']))
-                $eventList['secondary']['counterparty'][] = $change['counterparty'];
-            }  
-          }
+              break;
+            }
+          }*/
+          # Old end
+          
         }
-        if(isset($eventList['secondary']['value']))
-          $eventList['secondary']['value'] = (string)$eventList['secondary']['value'];
-        # New end
-
-        # Old start
-        /*foreach($balanceChangeExclFeeOnly as $change) {
-          if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
-            $eventList['secondary'] = $change;
-            break;
-          }
-        }*/
-        # Old end
-        
       }
+      
     }
     
     if(
@@ -334,8 +340,9 @@ class TxMutationParser
     if(count($positiveChangesNonXRP) > 0) {
       return $positiveChangesNonXRP[0];
     }
-   
+    
     if(count($positiveChanges) > 0) {
+      
       //Possibly offer accepted and fee paid in the same time, remove fee
       //if($fee && $positiveChanges[0]['currency'] === 'XRP') {
       //  $positiveChanges[0]['value'] = (string)BigDecimal::of($positiveChanges[0]['value'])->minus($fee)->stripTrailingZeros();
@@ -352,17 +359,20 @@ class TxMutationParser
      * Possibly XRP sent, if so: exclude fee
      */
     $fallback = $balanceChanges[0];
-
+   
     if(
       $fallback['currency'] === 'XRP' &&
       ( !isset($fallback['counterparty']) || (isset($fallback['counterparty']) && $fallback['counterparty'] === '') ) &&
       \substr($fallback['value'],0,1) === '-' &&
       $fee
     ) {
+     
       $fallback['value'] = BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal::of($fee)->abs() ) 
-        ? $fallback['value'] 
+        ? '0' //$fallback['value'] //fee equals to !value
         : (string)BigDecimal::of($fallback['value'])->plus($fee)->stripTrailingZeros();
-
+        //dd($fallback,BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal::of($fee)->abs() ));
+      if($fallback['value'] === '0')
+        return [];
       return $fallback;
     }
 
