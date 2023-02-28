@@ -9,7 +9,7 @@ use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx1.ts
  * @see https://hash.xrp.fans/D36265AD359D82BDF056CAFE760F9DFF42BB21C308EC3F68C4DE0D707D2FB6B6/json
  */
-final class ATx17Test extends TestCase
+final class Tx17Test extends TestCase
 {
     public function testDepositPreauthFeePayer()
     {
@@ -39,7 +39,16 @@ final class ATx17Test extends TestCase
 
         //does not contain `secondary` entry
         $this->assertArrayNotHasKey('secondary',$parsedTransaction['eventList']);
-       
+
+        # Event flow
+        //does not contain `start` entry
+        $this->assertArrayNotHasKey('start',$parsedTransaction['eventFlow']);
+
+        //does not contain `intermediate` entry
+        $this->assertArrayNotHasKey('intermediate',$parsedTransaction['eventFlow']);
+
+        //does not contain `end` entry
+        $this->assertArrayNotHasKey('end',$parsedTransaction['eventFlow']);
 
     }
 }

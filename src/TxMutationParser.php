@@ -49,7 +49,6 @@ class TxMutationParser
       }
     }
     unset($v);
-    //dd($balanceChangeExclFeeOnly,$ownBalanceChanges);
 
     /**
      * Get signer from tx public key
@@ -357,6 +356,9 @@ class TxMutationParser
     /**
      * Fallback to default
      * Possibly XRP sent, if so: exclude fee
+     * If fee equals to amount then fallback is zero,
+     *  fee is only primary change and we do not record that,
+     *  this will keep fee display consistant.
      */
     $fallback = $balanceChanges[0];
    
@@ -366,12 +368,10 @@ class TxMutationParser
       \substr($fallback['value'],0,1) === '-' &&
       $fee
     ) {
-     
       $fallback['value'] = BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal::of($fee)->abs() ) 
-        ? '0' //$fallback['value'] //fee equals to !value
+        ? null //$fallback['value'] //fee equals to !value = zero change
         : (string)BigDecimal::of($fallback['value'])->plus($fee)->stripTrailingZeros();
-        //dd($fallback,BigDecimal::of($fallback['value'])->abs()->isEqualTo( BigDecimal::of($fee)->abs() ));
-      if($fallback['value'] === '0')
+      if($fallback['value'] === null)
         return [];
       return $fallback;
     }

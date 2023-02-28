@@ -18,7 +18,7 @@ final class Tx5Test extends TestCase
         $account = "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
-       
+       //dd( $parsedTransaction);
 
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
@@ -35,34 +35,18 @@ final class Tx5Test extends TestCase
 
         # Event list
 
-        //contains (correct) `primary` entry
-        $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
-        $this->assertEquals([
-            'currency' => 'XRP',
-            'value' => '-0.000012'
-        ],$parsedTransaction['eventList']['primary']);
-
+        //does not contain `primary` entry
+        $this->assertArrayNotHasKey('primary',$parsedTransaction['eventList']);
 
         //does not contain `secondary` entry
         $this->assertArrayNotHasKey('secondary',$parsedTransaction['eventList']);
-        
 
         # Event flow
-
         //does not contain `start` entry
         $this->assertArrayNotHasKey('start',$parsedTransaction['eventFlow']);
 
-        //contains (correct) `intermediate` entry
-        $this->assertArrayHasKey('intermediate',$parsedTransaction['eventFlow']);
-        $this->assertEquals([
-            'account' => $account,
-            'mutations' => [
-                'out' => [
-                    'currency' => "XRP",
-                    'value' => "-0.000012",
-                ]
-            ]
-        ],$parsedTransaction['eventFlow']['intermediate']);
+        //does not contain `intermediate` entry
+        $this->assertArrayNotHasKey('intermediate',$parsedTransaction['eventFlow']);
 
         //does not contain `end` entry
         $this->assertArrayNotHasKey('end',$parsedTransaction['eventFlow']);
