@@ -6,28 +6,27 @@ use PHPUnit\Framework\TestCase;
 use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
 
 /***
- * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx5.ts
- * @see https://hash.xrp.fans/77F965D99CDE91E5B7652EB4406B107C7BDE59A51EE14EB7549813F633296DF1/json
+ * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx1.ts
+ * @see https://hash.xrp.fans/D36265AD359D82BDF056CAFE760F9DFF42BB21C308EC3F68C4DE0D707D2FB6B6/json
  */
-final class Tx5Test extends TestCase
+final class Tx17Test extends TestCase
 {
-    public function testTrustLineAddedByOwnAccount()
+    public function testDepositPreauthFeePayer()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx5.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx17.json');
         $transaction = \json_decode($transaction);
-        $account = "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ";
+        $account = "rf1BiGeXwwQoi8Z2ueFYTEXSwuJYfV2Jpn";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
-       //dd( $parsedTransaction);
 
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
-       
+
         # Basic info
 
         //Own account: one balance change
         $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
-        
+
         //Transaction type SET
         $this->assertEquals(TxMutationParser::MUTATIONTYPE_SET,$parsedTransaction['type']);
 
@@ -50,5 +49,6 @@ final class Tx5Test extends TestCase
 
         //does not contain `end` entry
         $this->assertArrayNotHasKey('end',$parsedTransaction['eventFlow']);
+
     }
 }

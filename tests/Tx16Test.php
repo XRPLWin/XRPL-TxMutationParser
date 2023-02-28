@@ -24,7 +24,7 @@ final class Tx16Test extends TestCase
 
         # Basic info
 
-        //Own account: two balance changes
+        //Own account: three balance changes
         $this->assertEquals(3,count($parsedTransaction['self']['balanceChanges']));
 
         //Transaction type TRADE
