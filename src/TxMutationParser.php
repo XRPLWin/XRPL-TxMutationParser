@@ -10,8 +10,8 @@ use XRPL_PHP\Core\Utilities as XRPLPHPUtilities;
  */
 class TxMutationParser
 {
-	private readonly string $account;
-	private readonly \stdClass $tx;
+  private readonly string $account;
+  private readonly \stdClass $tx;
   private array $result;
   private bool $feePayer = false; //if true then reference_account is fee payer
 
@@ -22,8 +22,6 @@ class TxMutationParser
   const MUTATIONTYPE_TRADE = 'TRADE'; //Eg. Trade based on offer, or self to self
   const MUTATIONTYPE_REGULARKEYSIGNER = 'REGULARKEYSIGNER'; //Executed on behalf of someone else (Regular Key)
   const MUTATIONTYPE_UNKNOWN = 'UNKNOWN'; //Could not determine the transaction type (from own context)
-
-
 
   public function __construct(string $reference_account, \stdClass $tx)
   {
@@ -105,7 +103,6 @@ class TxMutationParser
       $type = self::MUTATIONTYPE_TRADE;
     }
     
-
     /**
      * Own balance change is fee only
      */
@@ -124,7 +121,6 @@ class TxMutationParser
       } else {
         if(count($balanceChangeExclFeeOnly) > 1) {
 
-          # New start
           foreach($balanceChangeExclFeeOnly as $change) {
             if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
               if(!isset($eventList['secondary']))
@@ -140,20 +136,8 @@ class TxMutationParser
           }
           if(isset($eventList['secondary']['value']))
             $eventList['secondary']['value'] = (string)$eventList['secondary']['value'];
-          # New end
-  
-          # Old start
-          /*foreach($balanceChangeExclFeeOnly as $change) {
-            if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
-              $eventList['secondary'] = $change;
-              break;
-            }
-          }*/
-          # Old end
-          
         }
       }
-      
     }
     
     if(
@@ -190,7 +174,7 @@ class TxMutationParser
             $_balanceChanges[] = $change;
         }
       }
-      //dd($allBalanceChanges,$this->tx->Account);
+
       $eventFlow['start'] = [
         'account' => $this->tx->Account,
         'mutation' => $this->significantBalanceChange(
@@ -275,7 +259,6 @@ class TxMutationParser
         unset($eventFlow['intermediate']['mutations']['in']);
       }
 
-
       if($isOwnDirectTrade && isset($eventFlow['intermediate']) && isset($eventFlow['start'])) {
         unset($eventFlow['start']);
       }
@@ -335,7 +318,6 @@ class TxMutationParser
       }
     }
 
-    
     if(count($positiveChangesNonXRP) > 0) {
       return $positiveChangesNonXRP[0];
     }
