@@ -357,7 +357,6 @@ class TxMutationParser
         return [];
       return $fallback;
     }
-
     return $fallback;
   }
 
