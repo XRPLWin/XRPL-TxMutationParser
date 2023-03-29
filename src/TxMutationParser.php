@@ -30,6 +30,7 @@ class TxMutationParser
 
     $fee = BigDecimal::of($this->tx->Fee)->exactlyDividedBy(1000000)->stripTrailingZeros();
     $fee = (string)$fee;
+    $feePayerViaOwnBalanceChanges = false;
 
     /**
      * Calculate balance changes from meta and own changes
@@ -38,10 +39,11 @@ class TxMutationParser
     $allBalanceChanges = $bc->result(true);
     $ownBalanceChanges = isset($allBalanceChanges[$this->account]) ? $allBalanceChanges[$this->account]['balances'] : [];
     $balanceChangeExclFeeOnly = [];
+    
     foreach($ownBalanceChanges as $v) {
       if($v['currency'] === 'XRP' && $v['value'] === '-'.$fee && !isset($v['counterparty'])) {
-        //pass
         $this->feePayer = true;
+        $feePayerViaOwnBalanceChanges = true;
       } else {
         $balanceChangeExclFeeOnly[] = $v;
       }
@@ -78,21 +80,28 @@ class TxMutationParser
         $type = self::MUTATIONTYPE_ACCEPT;
       }
     }
-
+    
     if(isset($this->tx->Destination) && $this->tx->Destination === $this->account) {
       $type = self::MUTATIONTYPE_RECEIVED;
     }
-
+    
     /**
      * Payment to self, multiple currencies affected
      */
     if(
       isset($this->tx->Account) && $this->tx->Account === $this->account &&
-      isset($this->tx->Destination) && $this->tx->Destination === $this->account &&
-      count($balanceChangeExclFeeOnly) > 1
+      isset($this->tx->Destination) && $this->tx->Destination === $this->account
     ) {
-      $type = self::MUTATIONTYPE_TRADE;
-      $this->feePayer = true;
+      if(count($balanceChangeExclFeeOnly) > 1) {
+        $type = self::MUTATIONTYPE_TRADE;
+        $this->feePayer = true;
+      } 
+      /**
+       * Payment to self, XRP currecy affected, no fee in XRP balance changes
+       */
+      elseif($this->feePayer && !$feePayerViaOwnBalanceChanges) {
+        $this->feePayer = false;
+      }
     }
     
     /**
@@ -249,14 +258,15 @@ class TxMutationParser
 
       /**
        * If intermediate only one value (in) and negative,
-       * it's `out`
+       * then it's `out`
        */
       $in = isset($eventFlow['intermediate']['mutations']['in']) ? $eventFlow['intermediate']['mutations']['in'] : null;
       $out = isset($eventFlow['intermediate']['mutations']['out']) ? $eventFlow['intermediate']['mutations']['out'] : null;
       
       if($in && !$out && \substr($in['value'],0,1) === '-') {
         $eventFlow['intermediate']['mutations']['out'] = $in;
-        unset($eventFlow['intermediate']['mutations']['in']);
+        //unset($eventFlow['intermediate']['mutations']['in']);
+        $eventFlow['intermediate']['mutations']['in'] = null;
       }
 
       if($isOwnDirectTrade && isset($eventFlow['intermediate']) && isset($eventFlow['start'])) {

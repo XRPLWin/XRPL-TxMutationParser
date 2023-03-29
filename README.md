@@ -76,7 +76,7 @@ A sample response (as JSON):
     },
     intermediate: {
       account: 'rA...',
-      mutations: [Object]
+      mutations: {'in' => ?Object, 'out' => ?Object}
     },
     end: {
       account: 'rC...',

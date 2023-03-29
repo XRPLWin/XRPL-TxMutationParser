@@ -61,6 +61,7 @@ final class Tx15Test extends TestCase
         $this->assertEquals([
             'account' => $account,
             'mutations' => [
+                'in' => null,
                 'out' => [
                     'currency' => "XRP",
                     'value' => "-0.000564",
