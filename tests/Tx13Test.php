@@ -48,7 +48,7 @@ final class Tx13Test extends TestCase
             'account' => 'rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ',
             'mutation' => [
                 'currency' => 'XRP',
-                'value' => '-3.000012'
+                'value' => '-3'
             ]
         ],$parsedTransaction['eventFlow']['start']);
 

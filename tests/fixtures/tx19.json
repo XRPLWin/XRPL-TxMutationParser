@@ -1,0 +1,84 @@
+{
+    "id": 1,
+    "result": {
+      "Account": "rNwUcrxYiTZ5cRAuEQVuQGDb7miaPRBVAd",
+      "Amount": "21959240",
+      "Destination": "rNFugeoj3ZN8Wv6xhuLegUBBPXKCyWLRkB",
+      "DestinationTag": 1933938194,
+      "Fee": "10",
+      "Flags": 2147483648,
+      "LastLedgerSequence": 81773159,
+      "Sequence": 78746746,
+      "SigningPubKey": "02F7AC06942015820728D00FD094E46F13DB8C58215F9236D073884CED26F1FDF8",
+      "TransactionType": "Payment",
+      "TxnSignature": "3045022100C1DF1D5FF821972F2EF585C9A230D8F976E633AAAEB28A75337FB72D7771C1CE022010D9C3FABF3B60B9D366275CF7D6637B966A8818DA2A0F4750213A9609AC1C21",
+      "date": 745093090,
+      "hash": "F468A9B7702FB1546C3B2F4DCCCEDD8F0AC95BD9F7403CA09A3B662A00279394",
+      "inLedger": 81773157,
+      "ledger_index": 81773157,
+      "meta": {
+        "AffectedNodes": [
+          {
+            "ModifiedNode": {
+              "FinalFields": {
+                "Account": "rNwUcrxYiTZ5cRAuEQVuQGDb7miaPRBVAd",
+                "Balance": "146764324036",
+                "Flags": 131072,
+                "OwnerCount": 1,
+                "RegularKey": "rMgptxL3EiPTj35eWSpJDGyon8SSn4ELiH",
+                "Sequence": 78746747
+              },
+              "LedgerEntryType": "AccountRoot",
+              "LedgerIndex": "655E797CF6256C24343952382CCA0EFEFC9CC1431DFE3EA39B44A087B92C79D6",
+              "PreviousFields": {
+                "Balance": "146786283286",
+                "Sequence": 78746746
+              },
+              "PreviousTxnID": "0DC001355DE0C638648308748949201BC3EEA34284E2FC8D52A35A743DAA1D01",
+              "PreviousTxnLgrSeq": 81773092
+            }
+          },
+          {
+            "ModifiedNode": {
+              "FinalFields": {
+                "Account": "rNFugeoj3ZN8Wv6xhuLegUBBPXKCyWLRkB",
+                "Balance": "11747817307",
+                "Flags": 131072,
+                "OwnerCount": 0,
+                "Sequence": 59059736
+              },
+              "LedgerEntryType": "AccountRoot",
+              "LedgerIndex": "6F94B5486DBA5021658BF814570177F012A1680FD1973735094F71957DCFFF9F",
+              "PreviousFields": {
+                "Balance": "11725858067"
+              },
+              "PreviousTxnID": "8D7299403B90B0A3FD448FDB54BB037DC0846770A54DC3803237167C7CEC6E50",
+              "PreviousTxnLgrSeq": 81773156
+            }
+          }
+        ],
+        "TransactionIndex": 11,
+        "TransactionResult": "tesSUCCESS",
+        "delivered_amount": "21959240"
+      },
+      "validated": true
+    },
+    "resolvedBy": "generator",
+    "host": "wss://xrpl.ws",
+    "balanceChanges": {
+      "rNwUcrxYiTZ5cRAuEQVuQGDb7miaPRBVAd": [
+        {
+          "counterparty": "",
+          "currency": "XRP",
+          "value": "-21.95925"
+        }
+      ],
+      "rNFugeoj3ZN8Wv6xhuLegUBBPXKCyWLRkB": [
+        {
+          "counterparty": "",
+          "currency": "XRP",
+          "value": "21.95924"
+        }
+      ]
+    }
+  }

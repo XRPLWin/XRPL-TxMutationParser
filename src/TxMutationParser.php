@@ -188,10 +188,11 @@ class TxMutationParser
         'account' => $this->tx->Account,
         'mutation' => $this->significantBalanceChange(
           $_balanceChanges,
-          (
-            $this->tx->Account === $this->account || 
-            (isset($this->tx->Destination) && $this->tx->Destination === $this->account)
-          ) ? $fee : null
+          //(
+          //  $this->tx->Account === $this->account || 
+          //  (isset($this->tx->Destination) && $this->tx->Destination === $this->account)
+          //) ? $fee : null
+          $fee
         )
       ];
       if($eventFlow['start']['mutation'] === [])
@@ -353,7 +354,7 @@ class TxMutationParser
      *  this will keep fee display consistant.
      */
     $fallback = $balanceChanges[0];
-   
+
     if(
       $fallback['currency'] === 'XRP' &&
       ( !isset($fallback['counterparty']) || (isset($fallback['counterparty']) && $fallback['counterparty'] === '') ) &&
