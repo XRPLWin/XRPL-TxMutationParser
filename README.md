@@ -62,6 +62,7 @@ A sample response (as JSON):
   self: {
     feePayer: true,
     account: 'rA...',
+    balanceChangesExclFee: [ [Object], [Object], ... ],
     balanceChanges: [ [Object], [Object], ... ]
   },
   type: 'TRADE',
