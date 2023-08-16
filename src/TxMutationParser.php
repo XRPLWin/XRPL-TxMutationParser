@@ -28,14 +28,15 @@ class TxMutationParser
     $this->account = $reference_account;
     $this->tx = $tx;
 
-    $fee = BigDecimal::of($this->tx->Fee)->exactlyDividedBy(1000000)->stripTrailingZeros();
-    $fee = (string)$fee;
+    $feeBD = BigDecimal::of($this->tx->Fee)->exactlyDividedBy(1000000)->stripTrailingZeros();
+    $fee = (string)$feeBD;
     $feePayerViaOwnBalanceChanges = false;
 
     /**
      * Calculate balance changes from meta and own changes
      */
     $bc = new BalanceChanges($this->tx->meta);
+    
     $allBalanceChanges = $bc->result(true);
     $ownBalanceChanges = isset($allBalanceChanges[$this->account]) ? $allBalanceChanges[$this->account]['balances'] : [];
     $balanceChangeExclFeeOnly = [];
@@ -285,11 +286,34 @@ class TxMutationParser
       }
     }
 
+    /**
+     * Balance changes of self without fee
+     */
+    $ownBalanceChangesExclFee = $ownBalanceChanges;
+    if($this->feePayer) {
+      foreach($ownBalanceChangesExclFee as $_k => $_o) {
+        if(count($_o) == 2) {
+          //is XRP
+          $_value_xrp = BigDecimal::of($_o['value'])->stripTrailingZeros();
+          $_value_xrp_without_fee = $_value_xrp->minus($feeBD);
+          if($_value_xrp_without_fee->compareTo(0) == 0) {
+            //zero, remove
+            unset($ownBalanceChangesExclFee[$_k]);
+          } else {
+            //non-zero, adjust
+            $ownBalanceChangesExclFee[$_k]['value'] = (string)$_value_xrp_without_fee->stripTrailingZeros();
+          }
+        }
+      }
+    }
+    
+
     $this->result = [
       'self' => [
         'feePayer' => $this->feePayer,
         'account' => $this->account,
         'balanceChanges' => $ownBalanceChanges,
+        'balanceChangesExclFee' => $ownBalanceChangesExclFee,
       ],
       'type' => $type,
       'eventList' => $eventList,
