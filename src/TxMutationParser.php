@@ -295,10 +295,7 @@ class TxMutationParser
         if(count($_o) == 2) {
           //is XRP
           $_value_xrp = BigDecimal::of($_o['value']);
-          if($_value_xrp->compareTo(0) == 1)
-            $_value_xrp_without_fee = $_value_xrp->minus($feeBD);
-          else
-            $_value_xrp_without_fee = $_value_xrp->plus($feeBD);
+          $_value_xrp_without_fee = $_value_xrp->plus($feeBD);
           if($_value_xrp_without_fee->compareTo(0) == 0) {
             //zero, remove
             unset($ownBalanceChangesExclFee[$_k]);
