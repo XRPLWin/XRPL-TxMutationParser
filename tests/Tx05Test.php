@@ -9,7 +9,7 @@ use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx5.ts
  * @see https://hash.xrp.fans/77F965D99CDE91E5B7652EB4406B107C7BDE59A51EE14EB7549813F633296DF1/json
  */
-final class Tx5Test extends TestCase
+final class Tx05Test extends TestCase
 {
     public function testTrustLineAddedByOwnAccount()
     {

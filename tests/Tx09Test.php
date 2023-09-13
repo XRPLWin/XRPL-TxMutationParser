@@ -9,7 +9,7 @@ use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx9.ts
  * @see https://hash.xrp.fans/4AEEDA19D5EC4F902765FD061DCEDEEA63E4E507B5C2E0B17AA281AFD09F05AC/json
  */
-final class Tx9Test extends TestCase
+final class Tx09Test extends TestCase
 {
     public function testOfferCreateInstantTrade()
     {

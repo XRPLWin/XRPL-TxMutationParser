@@ -6,16 +6,16 @@ use PHPUnit\Framework\TestCase;
 use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
 
 /***
- * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx2.ts
- * @see https://hash.xrp.fans/A357FD7C8F0BBE7120E62FD603ACBE98819BC623D5D12BD81AC68564393A7792/json
+ * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx1.ts
+ * @see https://hash.xrp.fans/D36265AD359D82BDF056CAFE760F9DFF42BB21C308EC3F68C4DE0D707D2FB6B6/json
  */
-final class Tx2Test extends TestCase
+final class Tx01Test extends TestCase
 {
-    public function testOwnOfferConsumedPartiallyNotBySelf()
+    public function testRipplingTroughOwnAccount()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx2.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx1.json');
         $transaction = \json_decode($transaction);
-        $account = "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ";
+        $account = "r38UeRHhNLnprf1CjJ3ts4y1TuGCSSY3hL";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
 
@@ -37,16 +37,16 @@ final class Tx2Test extends TestCase
         //contains (correct) `primary` entry
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
-            'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
-            'currency' => 'EUR',
-            'value' => '249.99999999999999'
+            'counterparty' => 'rCSCManTZ8ME9EoLrSHHYKW8PPwWMgkwr',
+            'currency' => 'CSC',
+            'value' => '1.999999999999'
         ],$parsedTransaction['eventList']['primary']);
 
         //contains (correct) `secondary` entry
         $this->assertArrayHasKey('secondary',$parsedTransaction['eventList']);
         $this->assertEquals([
             'currency' => 'XRP',
-            'value' => '-1000'
+            'value' => '-0.004362'
         ],$parsedTransaction['eventList']['secondary']);
 
         # Event flow
@@ -54,14 +54,7 @@ final class Tx2Test extends TestCase
         //contains (correct) `start` entry
         $this->assertArrayHasKey('start',$parsedTransaction['eventFlow']);
         $this->assertArrayHasKey('account',$parsedTransaction['eventFlow']['start']);
-        $this->assertEquals([
-            'account' => 'rJWSJ8b2DxpvbhJjTA3ZRiEK2xsxZNHaLP',
-            'mutation' => [
-                'counterparty' => "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
-                'currency' => "EUR",
-                'value' => "-9599.9999999999976",
-            ]
-        ],$parsedTransaction['eventFlow']['start']);
+        $this->assertEquals('rogue5HnPRSszD9CWGSUz8UGHMVwSSKF6',$parsedTransaction['eventFlow']['start']['account']);
 
         //contains (correct) `intermediate` entry
         $this->assertArrayHasKey('intermediate',$parsedTransaction['eventFlow']);
@@ -69,19 +62,21 @@ final class Tx2Test extends TestCase
             'account' => $account,
             'mutations' => [
                 'in' => [
-                    'counterparty' => "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
-                    'currency' => "EUR",
-                    'value' => "249.99999999999999",
+                    'counterparty' => "rCSCManTZ8ME9EoLrSHHYKW8PPwWMgkwr",
+                    'currency' => "CSC",
+                    'value' => "1.999999999999",
                 ],
                 'out' => [
                     'currency' => "XRP",
-                    'value' => "-1000",
+                    'value' => "-0.004362",
                 ]
             ]
         ],$parsedTransaction['eventFlow']['intermediate']);
 
-        //does not containe `end` entry
-        $this->assertArrayNotHasKey('end',$parsedTransaction['eventFlow']);
+        //contains (correct) `end` entry
+        $this->assertArrayHasKey('end',$parsedTransaction['eventFlow']);
+        $this->assertArrayHasKey('account',$parsedTransaction['eventFlow']['end']);
+        $this->assertEquals('rogue5HnPRSszD9CWGSUz8UGHMVwSSKF6',$parsedTransaction['eventFlow']['end']['account']);
 
     }
 }

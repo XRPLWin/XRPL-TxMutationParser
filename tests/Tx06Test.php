@@ -9,7 +9,7 @@ use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx6.ts
  * @see https://hash.xrp.fans/2854762BC8FF1B96FB7231131C49054BF65EE5576C62400E80548E61B0CD1F50/json
  */
-final class Tx6Test extends TestCase
+final class Tx06Test extends TestCase
 {
     public function testRegular3XrpSending()
     {

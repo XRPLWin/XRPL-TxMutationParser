@@ -121,6 +121,21 @@ class TxMutationParser
     }
     
     /**
+     * Return to issuer on Payment, via delivered_amount.
+     */
+    if($this->tx->TransactionType == 'Payment' && $this->tx->Account == $this->account) {
+      if(
+        isset($this->tx->meta->delivered_amount->issuer) &&
+        isset($this->tx->Destination) && 
+        $this->tx->meta->delivered_amount->issuer == $this->tx->Destination
+      ) {
+        $type = self::MUTATIONTYPE_SENT;
+        //dd($this);
+      }
+    }
+    
+
+    /**
      * Render Event List object
      */
     $eventList = [];
@@ -285,6 +300,32 @@ class TxMutationParser
         $eventList['primary']['value'] = (string)BigDecimal::of($eventList['primary']['value'])->plus($fee)->stripTrailingZeros();
       }
     }
+
+    /**
+     * Return to issuer on Payment, via delivered_amount.
+     * Extract primary change from delivered_amount.
+     */
+    if($this->tx->TransactionType == 'Payment' && $this->tx->Account == $this->account) {
+      if(
+        isset($this->tx->meta->delivered_amount->issuer) &&
+        isset($this->tx->Destination) && 
+        $this->tx->meta->delivered_amount->issuer == $this->tx->Destination
+      ) {
+        if(count($eventList) == 0) {
+          if(is_string($this->tx->meta->delivered_amount)) {
+            //xrp
+            $eventList['primary']['currency'] = 'XRP';
+            $eventList['primary']['value'] = (string)BigDecimal::of($this->tx->meta->delivered_amount)->exactlyDividedBy(1000000)->stripTrailingZeros();
+          } else {
+            $eventList['primary']['currency'] = $this->tx->meta->delivered_amount->currency;
+            $eventList['primary']['counterparty'] = $this->tx->meta->delivered_amount->issuer;
+            $eventList['primary']['value'] = (string)BigDecimal::of($this->tx->meta->delivered_amount->value)->stripTrailingZeros();
+          }
+        }
+      }
+      
+    }
+    
 
     /**
      * Balance changes of self without fee

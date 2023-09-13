@@ -6,43 +6,43 @@ use PHPUnit\Framework\TestCase;
 use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
 
 /***
- * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx8.ts
- * @see https://hash.xrp.fans/2CE935CC1FB07310E34DF373C95CE735FCB546577BA3C3E197F5F2CECAABB8B4/json
+ * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx4.ts
+ * @see https://hash.xrp.fans/E788964F86299E0D5CF9ACD30D0E1DC120BBECA1AC0E10C52FED8EE8368BC9EE/json
  */
-final class Tx8Test extends TestCase
+final class Tx04Test extends TestCase
 {
-    //Sending a payment, other account (Regular Key) signed
-    public function testSendingAPaymentOtherAccountRegularKeySigned()
+    public function testPartialPaymentReceipient()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx8.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx4.json');
         $transaction = \json_decode($transaction);
-        $account = "rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F";
+        $account = "rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
-        
+       
+
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
        
         # Basic info
 
-        //Own account: two balance changes
-        $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
+        //Own account: one balance change
+        $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
+        
+        //Transaction type RECEIVED
+        $this->assertEquals(TxMutationParser::MUTATIONTYPE_RECEIVED,$parsedTransaction['type']);
 
-        //Transaction type SENT
-        $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
-
-        $this->assertTrue($parsedTransaction['self']['feePayer']);
+        $this->assertFalse($parsedTransaction['self']['feePayer']);
 
         # Event list
 
         //contains (correct) `primary` entry
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
-            'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
-            'currency' => "USD",
-            'value' => "-0.1",
+            'currency' => 'XRP',
+            'value' => '0.052945'
         ],$parsedTransaction['eventList']['primary']);
-        
+
+
         //does not contain `secondary` entry
         $this->assertArrayNotHasKey('secondary',$parsedTransaction['eventList']);
         
@@ -51,12 +51,13 @@ final class Tx8Test extends TestCase
 
         //contains (correct) `start` entry
         $this->assertArrayHasKey('start',$parsedTransaction['eventFlow']);
+        $this->assertArrayHasKey('account',$parsedTransaction['eventFlow']['start']);
         $this->assertEquals([
-            'account' => $account,
+            'account' => 'rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F',
             'mutation' => [
-                'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
+                'counterparty' => "rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq",
                 'currency' => "USD",
-                'value' => "-0.1",
+                'value' => "-0.05",
             ]
         ],$parsedTransaction['eventFlow']['start']);
 
@@ -69,8 +70,9 @@ final class Tx8Test extends TestCase
             'account' => 'rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT',
             'mutation' => [
                 'currency' => "XRP",
-                'value' => "0.106294",
+                'value' => "0.052945",
             ]
         ],$parsedTransaction['eventFlow']['end']);
+
     }
 }

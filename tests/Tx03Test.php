@@ -6,16 +6,16 @@ use PHPUnit\Framework\TestCase;
 use XRPLWin\XRPLTxMutatationParser\TxMutationParser;
 
 /***
- * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx4.ts
+ * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/test/tx3.ts
  * @see https://hash.xrp.fans/E788964F86299E0D5CF9ACD30D0E1DC120BBECA1AC0E10C52FED8EE8368BC9EE/json
  */
-final class Tx4Test extends TestCase
+final class Tx03Test extends TestCase
 {
-    public function testPartialPaymentReceipient()
+    public function testPartialPaymentSender()
     {
-        $transaction = file_get_contents(__DIR__.'/fixtures/tx4.json');
+        $transaction = file_get_contents(__DIR__.'/fixtures/tx3.json');
         $transaction = \json_decode($transaction);
-        $account = "rPdvC6ccq8hCdPKSPJkPmyZ4Mi1oG2FFkT";
+        $account = "rQHYSEyxX3GKK3F6sXRvdd2NHhUqaxtC6F";
         $TxMutationParser = new TxMutationParser($account, $transaction->result);
         $parsedTransaction = $TxMutationParser->result();
        
@@ -25,21 +25,22 @@ final class Tx4Test extends TestCase
        
         # Basic info
 
-        //Own account: one balance change
-        $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
+        //Own account: two balance changes
+        $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
         
-        //Transaction type RECEIVED
-        $this->assertEquals(TxMutationParser::MUTATIONTYPE_RECEIVED,$parsedTransaction['type']);
+        //Transaction type SENT
+        $this->assertEquals(TxMutationParser::MUTATIONTYPE_SENT,$parsedTransaction['type']);
 
-        $this->assertFalse($parsedTransaction['self']['feePayer']);
+        $this->assertTrue($parsedTransaction['self']['feePayer']);
 
         # Event list
 
         //contains (correct) `primary` entry
         $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
         $this->assertEquals([
-            'currency' => 'XRP',
-            'value' => '0.052945'
+            'counterparty' => 'rhub8VRN55s94qWKDv6jmDy1pUykJzF3wq',
+            'currency' => 'USD',
+            'value' => '-0.05'
         ],$parsedTransaction['eventList']['primary']);
 
 

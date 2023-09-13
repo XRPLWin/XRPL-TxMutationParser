@@ -1,0 +1,64 @@
+{
+    "id": 1,
+    "result": {
+      "Account": "rGWv5YTG4ATZS6okStexXV5ZPRbGqb7E3k",
+      "Amount": {
+        "currency": "53796D626F6C6F67790000000000000000000000",
+        "issuer": "rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2",
+        "value": "333"
+      },
+      "Destination": "rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2",
+      "Fee": "15",
+      "LastLedgerSequence": 80255837,
+      "Sequence": 66076622,
+      "SigningPubKey": "032CC2DBB8F3507DDFC7EDC3EB30E4C106F89DF89F78249D88A939C66C281E327F",
+      "TransactionType": "Payment",
+      "TxnSignature": "30440220799632C997F7AAC9130F337FFF71BF08F273CD852E350BC435FACFF60168906F02204318BB48AAB4A0B4DB70C662E952CEA163BE2B5B5165AFD53DEDCE1E82EF4B14",
+      "date": 739263202,
+      "hash": "C842D3D41CD48D707F18374641721F4DA5596E5C13D63AE23DF450ACA982DA9C",
+      "inLedger": 80255829,
+      "ledger_index": 80255829,
+      "meta": {
+        "AffectedNodes": [
+          {
+            "ModifiedNode": {
+              "FinalFields": {
+                "Account": "rGWv5YTG4ATZS6okStexXV5ZPRbGqb7E3k",
+                "Balance": "72268368",
+                "BurnedNFTokens": 181,
+                "Flags": 0,
+                "MintedNFTokens": 373,
+                "OwnerCount": 27,
+                "Sequence": 66076623,
+                "TicketCount": 5
+              },
+              "LedgerEntryType": "AccountRoot",
+              "LedgerIndex": "9A73A20578DD7D50CEFF36E87A8D044F635A7D2DBE1A63A2A5155256ECCF593D",
+              "PreviousFields": {
+                "Balance": "72268383",
+                "Sequence": 66076622
+              },
+              "PreviousTxnID": "E543C2D73286510AB87D626A52B56760A3DC9D9CBF6E2650685D9B0F8EC00A76",
+              "PreviousTxnLgrSeq": 80255701
+            }
+          }
+        ],
+        "TransactionIndex": 0,
+        "TransactionResult": "tesSUCCESS",
+        "delivered_amount": {
+          "currency": "53796D626F6C6F67790000000000000000000000",
+          "issuer": "rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2",
+          "value": "333"
+        }
+      },
+      "validated": true,
+      "warnings": [
+        {
+          "id": 1004,
+          "message": "This is a reporting server.  The default behavior of a reporting server is to only return validated data. If you are looking for not yet validated data, include \"ledger_index : current\" in your request, which will cause this server to forward the request to a p2p node. If the forward is successful the response will include \"forwarded\" : \"true\""
+        }
+      ]
+    },
+    "status": "success",
+    "type": "response"
+  }
