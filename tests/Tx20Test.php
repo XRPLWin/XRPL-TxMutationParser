@@ -39,8 +39,36 @@ final class Tx20Test extends TestCase
         $this->assertEquals([
             'currency' => '53796D626F6C6F67790000000000000000000000',
             'counterparty' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
-            'value' => '333'
+            'value' => '-333'
         ],$parsedTransaction['eventList']['primary']);
+
+        # Event flow
+        //does not contain `intermediate` entry
+        $this->assertArrayNotHasKey('intermediate',$parsedTransaction['eventFlow']);
+
+        //does contain `start` entry
+        $this->assertArrayHasKey('start',$parsedTransaction['eventFlow']);
+        $this->assertEquals([
+            'account' => $account,
+            'mutation' => [
+                'currency' => '53796D626F6C6F67790000000000000000000000',
+                'counterparty' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
+                'value' => "-333",
+            ]
+        ],$parsedTransaction['eventFlow']['start']);
+
+        //does contain `end` entry
+        $this->assertArrayHasKey('end',$parsedTransaction['eventFlow']);
+
+        $this->assertEquals([
+            'account' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
+            'mutation' => [
+                'currency' => '53796D626F6C6F67790000000000000000000000',
+                'counterparty' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
+                'value' => "333",
+            ]
+        ],$parsedTransaction['eventFlow']['end']);
+
 
         
     }
@@ -68,7 +96,39 @@ final class Tx20Test extends TestCase
 
         # Event list
 
-        //does NOT contain `primary` entry
-        $this->assertArrayNotHasKey('primary',$parsedTransaction['eventList']);
+        //does contain `primary` entry
+        $this->assertArrayHasKey('primary',$parsedTransaction['eventList']);
+        $this->assertEquals([
+            'currency' => '53796D626F6C6F67790000000000000000000000',
+            'counterparty' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
+            'value' => '333'
+        ],$parsedTransaction['eventList']['primary']);
+
+        # Event flow
+        //does not contain `intermediate` entry
+        $this->assertArrayNotHasKey('intermediate',$parsedTransaction['eventFlow']);
+
+        //does contain `start` entry
+        $this->assertArrayHasKey('start',$parsedTransaction['eventFlow']);
+        $this->assertEquals([
+            'account' => 'rGWv5YTG4ATZS6okStexXV5ZPRbGqb7E3k',
+            'mutation' => [
+                'currency' => '53796D626F6C6F67790000000000000000000000',
+                'counterparty' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
+                'value' => "-333",
+            ]
+        ],$parsedTransaction['eventFlow']['start']);
+
+        //does contain `end` entry
+        $this->assertArrayHasKey('end',$parsedTransaction['eventFlow']);
+
+        $this->assertEquals([
+            'account' => $account,
+            'mutation' => [
+                'currency' => '53796D626F6C6F67790000000000000000000000',
+                'counterparty' => 'rMK4cYevA3vBMhiSDd76WrT8Rrhe6wqUB2',
+                'value' => "333",
+            ]
+        ],$parsedTransaction['eventFlow']['end']);
     }
 }

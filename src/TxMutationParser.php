@@ -305,25 +305,62 @@ class TxMutationParser
      * Return to issuer on Payment, via delivered_amount.
      * Extract primary change from delivered_amount.
      */
-    if($this->tx->TransactionType == 'Payment' && $this->tx->Account == $this->account) {
-      if(
-        isset($this->tx->meta->delivered_amount->issuer) &&
-        isset($this->tx->Destination) && 
-        $this->tx->meta->delivered_amount->issuer == $this->tx->Destination
-      ) {
-        if(count($eventList) == 0) {
-          if(is_string($this->tx->meta->delivered_amount)) {
-            //xrp
-            $eventList['primary']['currency'] = 'XRP';
-            $eventList['primary']['value'] = (string)BigDecimal::of($this->tx->meta->delivered_amount)->exactlyDividedBy(1000000)->stripTrailingZeros();
-          } else {
-            $eventList['primary']['currency'] = $this->tx->meta->delivered_amount->currency;
-            $eventList['primary']['counterparty'] = $this->tx->meta->delivered_amount->issuer;
-            $eventList['primary']['value'] = (string)BigDecimal::of($this->tx->meta->delivered_amount->value)->stripTrailingZeros();
+    if($this->tx->TransactionType == 'Payment') {
+
+      if($this->tx->Account == $this->account) {
+        //sender
+        if(
+          isset($this->tx->meta->delivered_amount->issuer) &&
+          isset($this->tx->Destination) && 
+          $this->tx->meta->delivered_amount->issuer == $this->tx->Destination
+        ) {
+          if(count($eventList) == 0) {
+            if(is_string($this->tx->meta->delivered_amount)) {
+              //xrp
+              $eventList['primary']['currency'] = 'XRP';
+              $eventList['primary']['value'] = '-'.(string)BigDecimal::of($this->tx->meta->delivered_amount)->abs()->exactlyDividedBy(1000000)->stripTrailingZeros();
+            } else {
+              $eventList['primary']['currency'] = $this->tx->meta->delivered_amount->currency;
+              $eventList['primary']['counterparty'] = $this->tx->meta->delivered_amount->issuer;
+              $eventList['primary']['value'] = '-'.(string)BigDecimal::of($this->tx->meta->delivered_amount->value)->abs()->stripTrailingZeros();
+            }
+            $eventFlow['start']['account'] = $this->tx->Account;
+            $eventFlow['start']['mutation'] = $eventList['primary'];
+            $eventFlow['end']['account'] = $this->tx->Destination;
+            $eventFlow['end']['mutation'] = $eventList['primary'];
+            $eventFlow['end']['mutation']['value'] = \ltrim($eventFlow['end']['mutation']['value'],'-');
           }
         }
+        
+      } else {
+        if(isset($this->tx->Destination) && $this->account == $this->tx->Destination) {
+          //reciever
+          if(
+            isset($this->tx->meta->delivered_amount->issuer) &&
+            $this->tx->meta->delivered_amount->issuer == $this->tx->Destination
+          ) {
+            if(count($eventList) == 0) {
+              
+              if(is_string($this->tx->meta->delivered_amount)) {
+                //xrp
+                $eventList['primary']['currency'] = 'XRP';
+                $eventList['primary']['value'] = (string)BigDecimal::of($this->tx->meta->delivered_amount)->abs()->exactlyDividedBy(1000000)->stripTrailingZeros();
+              } else {
+                $eventList['primary']['currency'] = $this->tx->meta->delivered_amount->currency;
+                $eventList['primary']['counterparty'] = $this->tx->meta->delivered_amount->issuer;
+                $eventList['primary']['value'] = (string)BigDecimal::of($this->tx->meta->delivered_amount->value)->abs()->stripTrailingZeros();
+              }
+              $eventFlow['start']['account'] = $this->tx->Account;
+              $eventFlow['start']['mutation'] = $eventList['primary'];
+              $eventFlow['start']['mutation']['value'] = '-'.$eventFlow['start']['mutation']['value'];
+              $eventFlow['end']['account'] = $this->tx->Destination;
+              $eventFlow['end']['mutation'] = $eventList['primary'];
+             
+            }
+          }
+        }
+        //dd($eventList);
       }
-      
     }
     
 
