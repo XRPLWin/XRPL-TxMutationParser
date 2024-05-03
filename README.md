@@ -49,7 +49,10 @@ $tx = (object)[ // Full XRPL transaction, containing Account, Destination, meta,
     ...
 ];
 
-$TxMutationParser = new TxMutationParser($referenceAccount, $tx);
+//Enable to include trading fees calculation in allBalanceChanges results
+$calculateTradingFees = false;
+
+$TxMutationParser = new TxMutationParser($referenceAccount, $tx, $calculateTradingFees);
 $parsedTransaction = $TxMutationParserRef->result();
 
 print_r($parsedTransaction); 
@@ -124,6 +127,10 @@ Always show then in this order (if present)
 - end
 
 ... And only (but always) show them if they are present.
+
+
+#### Balance changes (`allBalanceChanges`)
+All Balance Changes returns balance changes for every participant. If `calculateTradingFees` enabled, balance changes also include trading fee calculations. 
 
 ## Running tests
 Run all tests in "tests" directory.

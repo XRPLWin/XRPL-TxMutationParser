@@ -25,7 +25,7 @@
     "prefer-stable": true,
     "require": {
       "php": "^8.1.0",
-      "xrplwin/xrpl": "^1.0",
+      "xrplwin/xrpl": "^1.0.18",
       "hardcastle/xrpl_php": "^0.8"
     },
     "require-dev": {

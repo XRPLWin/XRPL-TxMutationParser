@@ -16,9 +16,9 @@ final class Tx21Test extends TestCase
         $transaction = file_get_contents(__DIR__.'/fixtures/tx21.json');
         $transaction = \json_decode($transaction);
         $account = "ravr52zHtsL6JZrWxz4aZe96rffg1ixwGT"; //account root regular key
-        $TxMutationParser = new TxMutationParser($account, $transaction->result);
+        $TxMutationParser = new TxMutationParser($account, $transaction->result, true);
         $parsedTransaction = $TxMutationParser->result();
-        //dd($parsedTransaction);
+
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
 

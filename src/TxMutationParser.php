@@ -23,7 +23,7 @@ class TxMutationParser
   const MUTATIONTYPE_REGULARKEYSIGNER = 'REGULARKEYSIGNER'; //Executed on behalf of someone else (Regular Key)
   const MUTATIONTYPE_UNKNOWN = 'UNKNOWN'; //Could not determine the transaction type (from own context)
 
-  public function __construct(string $reference_account, \stdClass $tx)
+  public function __construct(string $reference_account, \stdClass $tx, bool $calculateTradingFees = false)
   {
     $this->account = $reference_account;
     $this->tx = $tx;
@@ -35,7 +35,7 @@ class TxMutationParser
     /**
      * Calculate balance changes from meta and own changes
      */
-    $bc = new BalanceChanges($this->tx->meta);
+    $bc = new BalanceChanges($this->tx->meta,$calculateTradingFees);
     
     $allBalanceChanges = $bc->result(true);
     $ownBalanceChanges = isset($allBalanceChanges[$this->account]) ? $allBalanceChanges[$this->account]['balances'] : [];
