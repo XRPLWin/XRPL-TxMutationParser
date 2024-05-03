@@ -16,9 +16,9 @@ final class Tx02Test extends TestCase
         $transaction = file_get_contents(__DIR__.'/fixtures/tx2.json');
         $transaction = \json_decode($transaction);
         $account = "rwietsevLFg8XSmG3bEZzFein1g8RBqWDZ";
-        $TxMutationParser = new TxMutationParser($account, $transaction->result);
+        $TxMutationParser = new TxMutationParser($account, $transaction->result,true);
         $parsedTransaction = $TxMutationParser->result();
-
+        
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
 

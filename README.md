@@ -66,7 +66,8 @@ A sample response (as JSON):
     feePayer: true,
     account: 'rA...',
     balanceChangesExclFee: [ [Object], [Object], ... ],
-    balanceChanges: [ [Object], [Object], ... ]
+    balanceChanges: [ [Object], [Object], ... ],
+    tradingFees: [ [Object], ... ] //Optional
   },
   type: 'TRADE',
   eventList: {

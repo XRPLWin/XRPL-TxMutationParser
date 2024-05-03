@@ -398,6 +398,12 @@ class TxMutationParser
       'eventFlow' => $eventFlow,
       'allBalanceChanges' => $allBalanceChanges
     ];
+    if($calculateTradingFees) {
+      $this->result['self']['tradingFees'] = [];
+      if(isset($allBalanceChanges[$this->account])) {
+        $this->result['self']['tradingFees'] = $allBalanceChanges[$this->account]['tradingfees'];
+      }
+    }
   }
 
   private function significantBalanceChange(array $balanceChanges, ?string $fee): array

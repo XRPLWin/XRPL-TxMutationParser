@@ -18,7 +18,7 @@ final class Tx21Test extends TestCase
         $account = "ravr52zHtsL6JZrWxz4aZe96rffg1ixwGT"; //account root regular key
         $TxMutationParser = new TxMutationParser($account, $transaction->result, true);
         $parsedTransaction = $TxMutationParser->result();
-
+        
         //Self (own account) must be $account
         $this->assertEquals($account,$parsedTransaction['self']['account']);
 
