@@ -3,7 +3,7 @@
 namespace XRPLWin\XRPLTxMutatationParser;
 use XRPLWin\XRPL\Utilities\BalanceChanges;
 use Brick\Math\BigDecimal;
-use XRPL_PHP\Core\CoreUtilities as XRPLPHPUtilities;
+use Hardcastle\XRPL_PHP\Core\CoreUtilities as XRPLPHPUtilities;
 
 /**
  * @see https://github.com/XRPL-Labs/TxMutationParser/blob/main/src/index.ts
