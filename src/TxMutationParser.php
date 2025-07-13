@@ -42,7 +42,7 @@ class TxMutationParser
     $balanceChangeExclFeeOnly = [];
     
     foreach($ownBalanceChanges as $v) {
-      if($v['currency'] === 'XRP' && $v['value'] === '-'.$fee && !isset($v['counterparty'])) {
+      if(isset($v['currency']) && $v['currency'] === 'XRP' && $v['value'] === '-'.$fee && !isset($v['counterparty'])) {
         $this->feePayer = true;
         $feePayerViaOwnBalanceChanges = true;
       } else {
@@ -145,12 +145,11 @@ class TxMutationParser
         unset($eventList['primary']);
       } else {
         if(count($balanceChangeExclFeeOnly) > 1) {
-
           foreach($balanceChangeExclFeeOnly as $change) {
             if($change != $eventList['primary']) { //compare two arrays if they have same key/value pairs
               if(!isset($eventList['secondary']))
                 $eventList['secondary'] = $change;
-              elseif($eventList['secondary']['currency'] == $change['currency']) { //prevent "XRP" and "currency" mixing
+              elseif($eventList['secondary']['currency'] == $change['currency']) { //prevent "XRP" and "currency" mixing - ? MPT?
                 $eventList['secondary']['value'] = BigDecimal::of($eventList['secondary']['value'])->plus($change['value']);
                 if(isset($eventList['secondary']['counterparty']) && !is_array($eventList['secondary']['counterparty']))
                   $eventList['secondary']['counterparty'] = [$eventList['secondary']['counterparty']];
@@ -295,7 +294,7 @@ class TxMutationParser
      * Exclude Fee from primary if primary is positive XRP and this account pays fee
      */
     if($this->feePayer && isset($eventList['primary'])) {
-      if($eventList['primary']['currency'] === 'XRP' && \substr($eventList['primary']['value'],0,1) !== '-') { //is positive XRP (fee included)
+      if(isset($eventList['primary']['currency']) && $eventList['primary']['currency'] === 'XRP' && \substr($eventList['primary']['value'],0,1) !== '-') { //is positive XRP (fee included)
         //remove Fee (plus positive fee to cancel out) to get real gained amount
         $eventList['primary']['value'] = (string)BigDecimal::of($eventList['primary']['value'])->plus($fee)->stripTrailingZeros();
       }
@@ -370,7 +369,8 @@ class TxMutationParser
     $ownBalanceChangesExclFee = $ownBalanceChanges;
     if($this->feePayer) {
       foreach($ownBalanceChangesExclFee as $_k => $_o) {
-        if(count($_o) == 2) {
+        
+        if(count($_o) == 2 && isset($_o['currency']) && $_o['currency'] == 'XRP') {
           //is XRP
           $_value_xrp = BigDecimal::of($_o['value']);
           $_value_xrp_without_fee = $_value_xrp->plus($feeBD);
@@ -421,7 +421,7 @@ class TxMutationParser
     
     $positiveChangesNonXRP = [];
     foreach($positiveChanges as $change) {
-      if($change['currency'] === 'XRP' && (!isset($change['counterparty']) || (isset($change['counterparty']) && $change['counterparty'] === '') ) ) {
+      if(isset($change['currency']) && $change['currency'] === 'XRP' && (!isset($change['counterparty']) || (isset($change['counterparty']) && $change['counterparty'] === '') ) ) {
         //skip
       } else {
         $positiveChangesNonXRP[] = $change;
@@ -430,7 +430,7 @@ class TxMutationParser
 
     $nonXRPChanges = [];
     foreach($balanceChanges as $change) {
-      if($change['currency'] === 'XRP' && (!isset($change['counterparty']) || (isset($change['counterparty']) && $change['counterparty'] === '') ) ) {
+      if(isset($change['currency']) && $change['currency'] === 'XRP' && (!isset($change['counterparty']) || (isset($change['counterparty']) && $change['counterparty'] === '') ) ) {
         //skip
       } else {
         $nonXRPChanges[] = $change;
