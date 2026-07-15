@@ -130,7 +130,6 @@ class TxMutationParser
         $this->tx->meta->delivered_amount->issuer == $this->tx->Destination
       ) {
         $type = self::MUTATIONTYPE_SENT;
-        //dd($this);
       }
     }
     
@@ -163,17 +162,20 @@ class TxMutationParser
         }
       }
     }
-    
+    //dd($eventList,$type, self::MUTATIONTYPE_TRADE);
     if(
       $type === self::MUTATIONTYPE_TRADE &&
       isset($eventList['primary']) &&
       isset($eventList['secondary']) &&
-      $eventList['primary']['currency'] === $eventList['secondary']['currency'] &&
+      $this->isSameCurrency($eventList['primary'],$eventList['secondary']) &&
+      //$eventList['primary']['currency'] === $eventList['secondary']['currency'] &&
       BigDecimal::of($eventList['primary']['value'])->abs()->isEqualTo( BigDecimal::of($eventList['secondary']['value'])->abs() )
     ) {
       unset($eventList['primary']);
       unset($eventList['secondary']);
     }
+
+    
 
     /**
      * Render event details, min. 1, max. 3 results:
@@ -404,6 +406,33 @@ class TxMutationParser
         $this->result['self']['tradingFees'] = $allBalanceChanges[$this->account]['tradingfees'];
       }
     }
+  }
+
+
+  private function isSameCurrency(array $a, array $b): bool
+  {
+    //$this->isSameCurrency($eventList['primary'],$eventList['secondary']) &&
+
+    //Check if XRP
+    if(isset($a['currency']) && $a['currency'] === 'XRP' && (!isset($a['counterparty']) || (isset($a['counterparty']) && $a['counterparty'] === '') ) ) {
+      if(isset($b['currency']) && $b['currency'] === 'XRP' && (!isset($b['counterparty']) || (isset($b['counterparty']) && $b['counterparty'] === '') ) ) {
+        return true;
+      }
+    }
+    //Check if same currency (no counterparty check, as counterparty can be different for same currency in single transaction)
+    if(isset($a['currency']) && isset($b['currency'])) {
+      if($a['currency'] === $b['currency']) {
+        return true;
+      }
+    }
+
+    //Check if MPT  eg. [ "mpt_issuance_id" => "00381376C7A84BE22C567D0BE94CC2A9B7B936B6D48CF7C6" "value" => "99"]
+    if(isset($a['mpt_issuance_id']) && isset($b['mpt_issuance_id'])) {
+      if($a['mpt_issuance_id'] === $b['mpt_issuance_id']) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private function significantBalanceChange(array $balanceChanges, ?string $fee): array

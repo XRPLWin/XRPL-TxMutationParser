@@ -41,7 +41,10 @@ final class Tx23Test extends TestCase
         # Basic info
 
         //Own account: one balance change
-        $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
+        
+        $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
+        
+        $this->assertEquals(1,count($parsedTransaction['self']['balanceChangesExclFee']));
         
         $this->assertEquals(
             [],

@@ -54,17 +54,26 @@ final class Tx25Test extends TestCase
         $this->assertEquals($account,$parsedTransaction['self']['account']);
         
         
-        $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
-        $this->assertEquals(0,count($parsedTransaction['self']['balanceChangesExclFee']));
+        $this->assertEquals(2,count($parsedTransaction['self']['balanceChanges']));
+        $this->assertEquals(1,count($parsedTransaction['self']['balanceChangesExclFee']));
         
         $this->assertEquals([
             [
                 'currency' => 'XRP',
                 'value' => '-0.000001',
+            ],
+            [
+                'mpt_issuance_id' => '0042AB9EAB8A5036CE4DB80D47016F557F9BFC9523985BF1',
+                'value' => '-58900',
             ]
         ], $parsedTransaction['self']['balanceChanges']);
 
-        $this->assertEquals([], $parsedTransaction['self']['balanceChangesExclFee']);
+        $this->assertEquals([
+            [
+                'mpt_issuance_id' => '0042AB9EAB8A5036CE4DB80D47016F557F9BFC9523985BF1',
+                'value' => '-58900',
+            ]
+        ], \array_values($parsedTransaction['self']['balanceChangesExclFee']));
 
 
     }

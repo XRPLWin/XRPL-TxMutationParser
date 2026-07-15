@@ -22,12 +22,22 @@ final class Tx26Test extends TestCase
         $this->assertEquals($account,$parsedTransaction['self']['account']);
         
         //mpt returned to issuer
-        $this->assertEquals(0,count($parsedTransaction['self']['balanceChanges']));
-        $this->assertEquals(0,count($parsedTransaction['self']['balanceChangesExclFee']));
+        $this->assertEquals(1,count($parsedTransaction['self']['balanceChanges']));
+        $this->assertEquals(1,count($parsedTransaction['self']['balanceChangesExclFee']));
        
-        $this->assertEquals([], $parsedTransaction['self']['balanceChanges']);
+        $this->assertEquals([
+            [
+                'mpt_issuance_id' => '0042AB9EAB8A5036CE4DB80D47016F557F9BFC9523985BF1',
+                'value' => '100000',
+            ]
+        ], $parsedTransaction['self']['balanceChanges']);
 
-        $this->assertEquals([], $parsedTransaction['self']['balanceChangesExclFee']);
+        $this->assertEquals([
+            [
+                'mpt_issuance_id' => '0042AB9EAB8A5036CE4DB80D47016F557F9BFC9523985BF1',
+                'value' => '100000',
+            ]
+        ], $parsedTransaction['self']['balanceChangesExclFee']);
 
 
     }

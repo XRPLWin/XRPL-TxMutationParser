@@ -28,8 +28,6 @@ final class Tx27Test extends TestCase
         $this->assertEquals([], $parsedTransaction['self']['balanceChanges']);
 
         $this->assertEquals([], $parsedTransaction['self']['balanceChangesExclFee']);
-
-
     }
 
     public function testMPTEscrowFinishByReciever()
